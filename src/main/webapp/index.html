@@ -4,16 +4,16 @@
     <title>Мимимиметр</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
-<body onload="checkCookies()">
+<body onload="checkVoted()">
     <p>
         <a id="start" href="../voting.html">Начать голосование</a>
     </p>
     <p>
-        <a href="../own.html">Добавить своего котика</a>
+        <a href="../adding.html">Добавить своего котика</a>
     </p>
 
     <script type="text/javascript">
-        function checkCookies() {
+        function checkVoted() {
             if (!!window.sessionStorage.getItem("voted")) {
                 document.getElementById("start").href = "../rating.html";
                 document.getElementById("start").innerHTML = "Посмотреть результаты голосования";

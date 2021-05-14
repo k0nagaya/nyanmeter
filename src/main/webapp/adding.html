@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Мимимиметр</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body onload="setImageValidation()">
+    <form method="POST" enctype="multipart/form-data" action="/add" id="form" >
+        <label for="file">Выбрать фото</label>
+        <br>
+        <input type="file" name="multipartFile" id="file" required>
+        <br>
+        <br>
+        <label for="name">Имя</label>
+        <br>
+        <input type="text" name="name" id="name" required>
+        <br>
+        <br>
+        <input type="submit" value="Добавить котика">
+    </form>
+
+    <script type="text/javascript">
+        function setImageValidation() {
+            let fileInput = document.getElementById("file");
+            fileInput.onchange = (e) => {
+                let reader = new FileReader();
+                let file = e.target.files[0];
+                if (file) {
+                    reader.onload = function() {
+                        let image = new Image();
+                        image.onload = function () {
+                            if (this.height !== this.width || this.height < 300) {
+                                fileInput.setCustomValidity(
+                                    "Изображение должно быть квадратным и не менее 300 на 300 пикселей")
+                            } else {
+                                fileInput.setCustomValidity("")
+                            }
+                        }
+                        image.src = reader.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
