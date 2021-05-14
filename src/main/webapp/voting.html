@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Мимимиметр</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body onload="setup()()">
+    <H1 align="center"> Кто из них мимимишнее? Кликни по фотографии</H1>
+    <div id="chooser" align="center">
+        <div id="first" style="display:inline-block" >
+            <img id="firstImg" height="300px" width="300px" src="" />
+            <div>
+                <a href="#" id="firstLink"></a>
+            </div>
+        </div>
+        <div id="second" style="display:inline-block" >
+            <img id="secondImg" height="300px" width="300px" src="" />
+            <div>
+                <a href="#" id="secondLink"></a>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let cats;
+        async function setup() {
+            const response = await fetch('http://localhost:8080/list');
+            cats = await response.json();
+            setCats(0);
+        }
+
+        function setCats(idx) {
+            const cat1 = cats[idx];
+            const cat2 = cats[idx+1];
+
+            const firstLink = document.getElementById('firstLink');
+            firstLink.innerHTML = cat1.name;
+            firstLink.onclick = () => vote(idx);
+
+            const secondLink = document.getElementById('secondLink');
+            secondLink.innerHTML = cat2.name;
+            secondLink.onclick = () => vote(idx+1);
+
+            const firstImage = document.getElementById("firstImg");
+            firstImage.setAttribute("src", cat1.url)
+            firstImage.onclick = () => vote(idx);
+
+            const secondImage = document.getElementById("secondImg");
+            secondImage.setAttribute("src", cat2.url)
+            secondImage.onclick = () => vote(idx+1);
+        }
+
+        async function vote(idx) {
+            cats[idx].rate++;
+            idx = getNextIndex(idx);
+            if (idx < 9) {
+                setCats(idx);
+            } else {
+                window.sessionStorage.setItem("voted", "true");
+                await fetch('http://localhost:8080/recalc', {
+                    method: 'POST',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(cats)
+                });
+                document.getElementById("chooser")
+                    .innerHTML = "<a href=\"../rating.html\"> Посмотреть текущий рейтинг</a>";
+            }
+            return false;
+        }
+
+        function getNextIndex(idx) {
+            return idx + 2 - idx % 2;
+        }
+    </script>
+</body>
+</html>

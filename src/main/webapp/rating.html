@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Мимимиметр</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+        #container {
+            display: flex;
+            justify-content: center;
+        }
+
+        #result {
+            display: flex;
+            flex-direction: column
+        }
+
+        .item {
+            display: flex;
+            margin-bottom: 20px
+        }
+        .item > div:first-child {
+            flex: 1;
+            font-size: 30px
+        }
+        .item > div:last-child {
+            flex: 5;
+            font: italic 30px cursive;
+        }
+
+        img {
+            flex: 5;
+            height: 300px;
+            width: 300px
+        }
+        a {
+            font: 50px bold;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body onload="setup()">
+    <div id="container">
+        <div id="result">
+            <div class="listEl"></div>
+        </div>
+    </div>
+    <a href="../index.html">На стартовую страницу</a>
+
+    <script>
+        let cats;
+        async function setup() {
+            const response = await fetch('http://localhost:8080/rating');
+            cats = await response.json();
+
+            let result = document.getElementById("result");
+            let itemTemplate = document.getElementsByClassName("listEl")[0].cloneNode();
+            result.innerHTML = "";
+
+            for (let idx in cats){
+                let item = itemTemplate.cloneNode();
+                item.innerHTML =
+                    `<div class="item">
+                        <div>${+idx + 1}.</div>
+                        <img src="${cats[idx].url}" />
+                        <div>
+                            ${cats[idx].name}, голосов: ${cats[idx].rate}
+                        </div>
+                    </div>`;
+                result.append(item);
+            }
+        }
+    </script>
+</body>
+</html>
